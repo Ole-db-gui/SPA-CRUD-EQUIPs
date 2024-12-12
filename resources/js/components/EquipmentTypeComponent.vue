@@ -3,7 +3,8 @@
         <h1>Список типов оборудования</h1>
         <div class="row">
             <div class="col-md-12">
-                <router-link to="/add-equipment-type" class="btn btn-primary">Добавить новый тип оборудования</router-link>
+                <router-link :to="{ name: 'CreateEquipmentType'}" class="btn btn-primary">Добавить новый тип оборудования</router-link>
+                <span class="m-lg-3"><router-link :to="{ name: 'Equipments'}" class="btn btn-info">Список оборудования</router-link></span>
             </div>
         </div>
         <br />
@@ -24,7 +25,7 @@
                         <td>{{ type.name }}</td>
                         <td>{{ type.sn_mask }}</td>
                         <td>
-                            <router-link :to="{ name: 'editEquipmentType', params: { id: type.id }}" class="btn btn-primary">Редактировать</router-link>
+                            <router-link :to="{ name: 'EditEquipmentType', params: { id: type.id }}" class="btn btn-primary">Редактировать</router-link>
                             <button class="btn btn-danger ml-2" @click="deleteEquipmentType(type.id)">Удалить</button>
                         </td>
                     </tr>
@@ -49,7 +50,7 @@ export default {
     },
     methods: {
         fetchData() {
-            axios.get('http://localhost:8000/api/equipment-types')
+            axios.get('/api/equipment-type')
                 .then(response => {
                     this.types = response.data.data;
                 })
@@ -57,7 +58,7 @@ export default {
         },
         deleteEquipmentType(id) {
             if (confirm("Вы уверены, что хотите удалить этот тип оборудования?")) {
-                axios.delete(`http://localhost:8000/api/equipment-types/${id}`)
+                axios.delete(`/api/equipment-type/${id}`)
                     .then(() => {
                         this.fetchData();
                     })

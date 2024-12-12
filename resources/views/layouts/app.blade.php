@@ -18,12 +18,7 @@
 </head>
 <body>
     <div id="app" class="p-5">
-{{--        <create-equipment-type-component></create-equipment-type-component>--}}
-        <equipment-type-component></equipment-type-component>
-{{--        <edit-equipment-type-component></edit-equipment-type-component>--}}
-{{--        <equipment-component></equipment-component>--}}
-{{--        <add-equipment-component></add-equipment-component>--}}
-{{--        <edit-equipment-component></edit-equipment-component>--}}
+        @yield('content')
     </div>
 </body>
 </html>

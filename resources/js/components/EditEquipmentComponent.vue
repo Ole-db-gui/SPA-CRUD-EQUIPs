@@ -1,35 +1,37 @@
 <template>
     <div class="container">
         <h1>Редактирование оборудования</h1>
+        <serial-mask-info-component></serial-mask-info-component>
         <form @submit.prevent="updateEquipment">
-            <div class="row">
-                <div class="col-md-6">
-                    <label for="equipmentType">Тип оборудования</label>
-                    <select id="equipmentType" v-model="editedEquipment.equipmentTypeId" required>
-                        <option value="" disabled selected>Выберите тип оборудования</option>
-                        <option v-for="type in types" :key="type.id" :value="type.id">{{ type.name }}</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6">
-                    <label for="serialNumber">Серийный номер</label>
-                    <input type="text" id="serialNumber" v-model="editedEquipment.serialNumber" required pattern="^[0-9A-Za-z]{{ mask }}$" title="Формат серийного номера должен соответствовать маске {{ mask }}" />
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-12">
-                    <label for="description">Описание</label>
-                    <textarea id="description" v-model="editedEquipment.description" rows="5"></textarea>
-                </div>
-            </div>
-
+            <table class="table table-striped w-auto">
+                <thead>
+                <tr>
+                    <th scope="col">Тип оборудования</th>
+                    <th scope="col">Серийный номер</th>
+                    <th scope="col">Описание</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td class="w-auto">
+                        <select class="ms-2" id="equipmentType" v-model="editedEquipment.equipmentTypeId" required>
+                            <option value="" disabled selected>Выберите тип оборудования</option>
+                            <option v-for="type in types" :key="type.id" :value="type.id">{{ type.name }}, маска формата: {{ type.sn_mask }}</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input class="ms-2" type="text" id="serialNumber" v-model="editedEquipment.serial_number" required>
+                    </td>
+                    <td>
+                        <textarea class="ms-2" id="description" v-model="editedEquipment.description" rows="5"></textarea>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
             <div class="row mt-3">
                 <div class="col-md-12">
                     <button type="submit" class="btn btn-primary">Обновить</button>
-                    <button type="button" class="btn btn-secondary ml-2" @click="$router.push({ name: 'listEquipment' })">Отмена</button>
+                    <button type="button" class="btn btn-secondary ms-2" @click="$router.push({ name: 'Equipments' })">Отмена</button>
                 </div>
             </div>
         </form>
@@ -38,8 +40,10 @@
 
 <script>
 import axios from 'axios';
+import SerialMaskInfoComponent from "@/components/SerialMaskInfoComponent.vue";
 export default {
     name: "EditEquipmentComponent",
+    components: {SerialMaskInfoComponent},
     data() {
         return {
             editedEquipment: {},
@@ -47,35 +51,35 @@ export default {
         };
     },
     created() {
-        // this.fetchEquipment();
-        // this.fetchTypes();
+        this.fetchEquipment();
+        this.fetchTypes();
     },
     methods: {
         fetchEquipment() {
-            axios.get(`http://localhost:8000/api/equipments/${this.$route.params.id}`)
+            axios.get(`/api/equipment/${this.$route.params.id}`)
                 .then(response => {
-                    this.editedEquipment = response.data;
+                    this.editedEquipment = response.data.data;
                 })
                 .catch(error => console.log(error));
         },
         updateEquipment() {
-            const { equipmentTypeId, serialNumber, description } = this.editedEquipment;
-            axios.put(`http://localhost:8000/api/equipments/${this.$route.params.id}`, {
+            const { equipmentTypeId, serial_number, description } = this.editedEquipment;
+            axios.put(`/api/equipment/${this.$route.params.id}`, {
                 equipment_type_id: equipmentTypeId,
-                serial_number: serialNumber,
+                serial_number: serial_number,
                 description: description
             }).then(() => {
                 alert("Изменения сохранены!");
-                this.$router.push({ name: 'listEquipment' });
+                this.$router.push({ name: 'Equipments' });
             }).catch(error => {
                 alert("Произошла ошибка при сохранении изменений.");
                 console.log(error);
             });
         },
         fetchTypes() {
-            axios.get('http://localhost:8000/api/equipment-types')
+            axios.get('/api/equipment-type')
                 .then(response => {
-                    this.types = response.data;
+                    this.types = response.data.data;
                 })
                 .catch(error => console.log(error));
         }

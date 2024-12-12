@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('equipment', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('equipment_type_id');
+            $table->foreign('equipment_type_id')->references('id')->on('equipment_types')->onDelete('cascade');
+            $table->string('serial_number')->unique();
+            $table->text('description', 500)->nullable();
             $table->timestamps();
         });
     }

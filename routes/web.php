@@ -1,11 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/equipments');
 });
 
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/{page}', function () {
+    return view('index');
+});
