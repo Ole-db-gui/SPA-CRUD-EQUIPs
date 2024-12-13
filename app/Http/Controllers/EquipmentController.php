@@ -71,6 +71,7 @@ class EquipmentController extends Controller
      * @return \App\Http\Resources\EquipmentResource Ресурс оборудования.
      */
     public function show(Equipment $equipment) {
+        $equipment->load('equipmentType');
         return new EquipmentResource($equipment);
     }
 
