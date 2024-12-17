@@ -23,13 +23,43 @@
 - `PUT /api/equipment-type/{equipmentType}`: Обновление существующего типа оборудования.
 - `DELETE /api/equipment-type/{equipmentType}`: Удаление типа оборудования.
 
+### raw данных для проверки метода создания оборудования, если тестировать через Postman при условии, что есть тип оборудования с маской XQA:
+
+{
+"equipment": [
+{
+"equipment_type_id": 2,
+"serial_number": "A@H",
+"description": "Тестовое оборудование 1"
+},
+{
+"equipment_type_id": 1,
+"serial_number": "V@C",
+"description": "Ещё одно тестовое оборудование 2"
+},
+{
+"equipment_type_id": 2,
+"serial_number": "V@B",
+"description": "Ещё одно тестовое оборудование 3"
+}
+]
+}
+
+### Параметры и их примеры для тестирования фильтра:
+- 
+- `GET /api/equipment?equipment_type_id=1`: Получение списка оборудования с фильтрацией по типу оборудования.
+- `GET /api/equipment?description=описание`: Получение списка оборудования с фильтрацией по описанию.
+- `GET /api/equipment?serial_number=X5@RQ3x_3`: Получение списка оборудования с фильтрацией по серийному номеру.
+- `GET /api/equipment-type?sn_mask=XQA`: Получение списка типов оборудования с фильтрацией по маске серийного номера.
+- `GET /api/equipment?name=link`: Получение списка типов оборудования с фильтрацией по названию.
+
+
 ## Чтобы запустить проект
 
 - Распаковываем проект
 - Запускаем команду composer install
 - Копируем .env.example и переименовываем в .env
 - В .env прописываем соединение с базой данных
-- Запускаем команду php artisan key:generate
 - Запускаем команду php artisan key:generate
 - Запскаем команду npm install
 - Запускаем команду php artisan serv

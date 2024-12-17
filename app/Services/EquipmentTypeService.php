@@ -26,6 +26,14 @@ class EquipmentTypeService
             $query->where('name', 'like', "%$q%");
         }
 
+        if ($description = request()->input('sn_mask')) {
+            $query->where('sn_mask', 'LIKE', '%' . $description . '%');
+        }
+
+        if ($description = request()->input('name')) {
+            $query->where('name', 'LIKE', '%' . $description . '%');
+        }
+
         return $query->paginate($perPage, ['*'], 'page', $page);
     }
 }

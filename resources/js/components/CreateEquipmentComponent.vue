@@ -16,13 +16,13 @@
                 <tbody>
                 <tr v-for="(equipment, index) in equipments" :key="index">
                     <td>
-                        <select v-model="equipment.equipmentTypeId" required>
+                        <select v-model="equipment.equipment_type_id" required>
                             <option value="" disabled selected>Выберите тип оборудования</option>
-                            <option v-for="type in types" :key="type.id" :value="type.id">{{ type.name }}, маска SN: {{ type.sn_mask}}</option>
+                            <option v-for="type in types" :key="type.id" :value="type.id">{{ type.name }}, маска SN: {{ type.sn_mask }}</option>
                         </select>
                     </td>
                     <td>
-                        <input type="text" v-model="equipment.serialNumber" required/>
+                        <input type="text" v-model="equipment.serial_number" required>
                     </td>
                     <td>
                         <textarea v-model="equipment.description" rows="2"></textarea>
@@ -56,8 +56,8 @@ export default {
         return {
             equipments: [
                 {
-                    equipmentTypeId: '',
-                    serialNumber: '',
+                    equipment_type_id: '',
+                    serial_number: '',
                     description: ''
                 }
             ],
@@ -68,30 +68,62 @@ export default {
         this.fetchTypes();
     },
     methods: {
-        addEquipments() {
-            const requests = this.equipments.map(equipment => {
-                return axios.post('/api/equipment/', {
-                    equipment_type_id: equipment.equipmentTypeId,
-                    serial_number: equipment.serialNumber,
-                    description: equipment.description
-                });
-            });
+        async addEquipments() {
+            const data = {
+                equipment: this.equipments
+            };
 
-            Promise.all(requests)
-                .then(() => {
-                    alert("Оборудование успешно добавлено!");
-                    this.equipments = [{ equipmentTypeId: '', serialNumber: '', description: '' }];
+            try {
+                const response = await axios.post('/api/equipment', data);
+
+                if (response.data.errors && response.data.errors.length > 0) {
+                    let errorMessages = [];
+
+                    // Проверяем, является ли значение массивом
+                    if (Array.isArray(response.data.errors)) {
+                        // Если это массив, проверяем его длину
+                        if (response.data.errors.length > 0) {
+                            // Сначала проверяем, является ли первый элемент массива объектом
+                            if (typeof response.data.errors[0] === 'object') {
+                                // Проходимся по каждому объекту в массиве ошибок
+                                response.data.errors.forEach((errorObj, index) => {
+                                    // Получаем ключ объекта (номер строки)
+                                    const rowNumber = Object.keys(errorObj)[0];
+
+                                    // Добавляем сообщение об ошибке к общему списку
+                                    errorMessages.push(`Ошибка для строки ${rowNumber}: ${errorObj[rowNumber]}`);
+                                });
+                            } else {
+                                // Если ошибки пришли в виде простого массива строк
+                                response.data.errors.forEach((errorMessage, index) => {
+                                    errorMessages.push(`Ошибка для строки ${index + 1}: ${errorMessage}`);
+                                });
+                            }
+                        }
+                    } else {
+                        // Если это объект, проходимся по его свойствам
+                        for (let key in response.data.errors) {
+                            errorMessages.push(`${key}: ${response.data.errors[key]}`);
+                        }
+                    }
+
+                    if (errorMessages.length > 0) {
+                        alert(errorMessages.join('\n'));
+                    }
+                } else {
+                    alert('Оборудование успешно добавлено!');
+                    this.equipments = [{ equipment_type_id: '', serial_number: '', description: '' }];
                     this.$router.push({ name: 'Equipments' });
-                })
-                .catch(error => {
-                    alert("Произошла ошибка при добавлении оборудования.");
-                    this.$router.push({ name: 'Equipments' });
-                });
+                }
+            } catch (error) {
+                alert('Произошла ошибка при добавлении оборудования.');
+                console.log(error);
+            }
         },
         addNewRow() {
             this.equipments.push({
-                equipmentTypeId: '',
-                serialNumber: '',
+                equipment_type_id: '',
+                serial_number: '',
                 description: ''
             });
         },

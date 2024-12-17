@@ -72,7 +72,7 @@ export default {
                 alert("Изменения сохранены!");
                 this.$router.push({ name: 'Equipments' });
             }).catch(error => {
-                alert("Произошла ошибка при сохранении изменений.");
+                alert("Ошибка обновления оборудования:"+error.response.data.errors);
                 console.log(error);
             });
         },

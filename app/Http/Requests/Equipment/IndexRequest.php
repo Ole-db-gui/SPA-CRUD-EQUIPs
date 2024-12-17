@@ -4,7 +4,7 @@ namespace App\Http\Requests\Equipment;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreRequest extends FormRequest
+class IndexRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,10 +22,10 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'equipment' => 'required|array',
-            'equipment.*.equipment_type_id' => 'required|exists:equipment_types,id',
-            'equipment.*.serial_number' => 'required|string|max:255',
-            'equipment.*.description' => 'nullable|string',
+            'q' => 'nullable|string',
+            'serial_number' => 'nullable|string',
+            'description' => 'nullable|string',
+            'equipment_type_id' => 'nullable|integer',
         ];
     }
 }

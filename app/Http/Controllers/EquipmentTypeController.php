@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\EquipmentTypeResource;
 use App\Http\Requests\EquipmentType\StoreRequest;
 use App\Http\Requests\EquipmentType\UpdateRequest;
+use App\Http\Requests\EquipmentType\IndexRequest;
 
 /**
  * Контроллер для управления типами оборудования.
@@ -37,7 +38,7 @@ class EquipmentTypeController extends Controller
      * @param \Illuminate\Http\Request $request Запрос от клиента.
      * @return \App\Http\Resources\EquipmentTypeResource Коллекция ресурсов типов оборудования.
      */
-    public function index(Request $request)
+    public function index(IndexRequest $request)
     {
         $page = $request->get('page', 1); // Текущая страница
         $perPage = $request->get('per_page', 15); // Количество записей на странице

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Equipment\StoreRequest;
 use App\Http\Requests\Equipment\UpdateRequest;
+use App\Http\Requests\Equipment\IndexRequest;
 use App\Http\Resources\EquipmentResource;
 use App\Models\Equipment;
 use App\Models\EquipmentType;
@@ -38,7 +39,7 @@ class EquipmentController extends Controller
      * @param \Illuminate\Http\Request $request Запрос от клиента.
      * @return \App\Http\Resources\EquipmentResource Коллекция ресурсов оборудования.
      */
-    public function index(Request $request)
+    public function index(IndexRequest $request)
     {
         $page = $request->get('page', 1); // Текущая страница
         $perPage = $request->get('per_page', 15); // Количество записей на странице
@@ -55,13 +56,8 @@ class EquipmentController extends Controller
      * @return \App\Http\Resources\EquipmentResource Ресурс созданного оборудования.
      */
     public function store(StoreRequest $request) {
-        $preValidated = $request->all();
-        if (!$this->service->validateSerialNumber($preValidated['serial_number'], $preValidated['equipment_type_id'])) {
-            return response()->json(['errors' => ['Неверный формат серийного номера']], 422);
-        }
-        $data = $request->validated();
-        $equipment = Equipment::create($data);
-        return new EquipmentResource($equipment);
+        $response = $this->service->createEquipments($request->validated());
+        return response()->json($response);
     }
 
     /**
@@ -85,7 +81,7 @@ class EquipmentController extends Controller
     public function update(UpdateRequest $request, Equipment $equipment) {
         $preValidated = $request->all();
         if (!$this->service->validateSerialNumber($preValidated['serial_number'], $preValidated['equipment_type_id'])) {
-            return response()->json(['errors' => ['Неверный формат серийного номера']], 422);
+            return response()->json(['errors' => ['Неверный формат серийного номера, либо оборудование с таким серийным номером и типом оборудования уже есть']], 422);
         }
         $data = $request->validated();
         $equipment->update($data);
